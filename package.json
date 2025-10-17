@@ -1,0 +1,34 @@
+{
+  "name": "@mmmlib/weekwide-timeline",
+  "version": "0.2.0",
+  "description": "GitHub-style contribution graph web component for visualizing temporal data",
+  "type": "module",
+  "main": "src/weekwide-timeline.js",
+  "files": [
+    "src/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "dev": "npx http-server . -p 8004 -c-1",
+    "test": "echo 'No tests yet' && exit 0"
+  },
+  "keywords": [
+    "timeline",
+    "contribution-graph",
+    "visualization",
+    "web-component",
+    "mmm",
+    "calendar"
+  ],
+  "author": "Smurp",
+  "license": "AGPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smurp/weekwide-timeline.git"
+  },
+  "bugs": {
+    "url": "https://github.com/smurp/weekwide-timeline/issues"
+  },
+  "homepage": "https://github.com/smurp/weekwide-timeline#readme"
+}

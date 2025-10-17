@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>weekwide-timeline - Example</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+      background: #f6f8fa;
+    }
+    
+    h1 {
+      color: #24292e;
+      margin-bottom: 8px;
+    }
+    
+    .description {
+      color: #586069;
+      margin-bottom: 32px;
+    }
+    
+    .section {
+      background: white;
+      padding: 24px;
+      border-radius: 6px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    
+    .section h2 {
+      margin-top: 0;
+      color: #24292e;
+      font-size: 18px;
+    }
+    
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    
+    label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #24292e;
+    }
+    
+    select, input, button {
+      padding: 8px 12px;
+      border: 1px solid #d1d5da;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    
+    button {
+      background: #2ea44f;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    
+    button:hover {
+      background: #2c974b;
+    }
+    
+    button.secondary {
+      background: #6c757d;
+    }
+    
+    button.secondary:hover {
+      background: #5a6268;
+    }
+    
+    .output {
+      margin-top: 16px;
+      padding: 12px;
+      background: #f6f8fa;
+      border-radius: 6px;
+      font-family: 'Monaco', 'Courier New', monospace;
+      font-size: 12px;
+      min-height: 60px;
+      color: #24292e;
+    }
+  </style>
+</head>
+<body>
+  <h1>weekwide-timeline</h1>
+  <p class="description">
+    GitHub-style contribution graph web component for visualizing temporal data
+  </p>
+  
+  <div class="section">
+    <h2>Default: One Year Horizontal</h2>
+    <weekwide-timeline id="timeline1"></weekwide-timeline>
+  </div>
+  
+  <div class="section">
+    <h2>Vertical Orientation (timeline flows down)</h2>
+    <weekwide-timeline id="timeline2"></weekwide-timeline>
+  </div>
+  
+  <div class="section">
+    <h2>Fixed Size with Horizontal Scrolling</h2>
+    <weekwide-timeline id="timeline3"></weekwide-timeline>
+  </div>
+  
+  <div class="section">
+    <h2>Custom Date Range (Last 90 Days)</h2>
+    <weekwide-timeline id="timeline4"></weekwide-timeline>
+  </div>
+  
+  <div class="section">
+    <h2>Interactive Controls</h2>
+    <div class="controls">
+      <div class="control-group">
+        <label>Orientation</label>
+        <select id="orientationSelect">
+          <option value="horizontal">Horizontal</option>
+          <option value="vertical">Vertical</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label>Color Scheme</label>
+        <select id="colorSelect">
+          <option value="green">Green</option>
+          <option value="blue">Blue</option>
+          <option value="purple">Purple</option>
+          <option value="orange">Orange</option>
+          <option value="red">Red</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label>Cell Size</label>
+        <input type="range" id="cellSizeSlider" min="8" max="20" value="12">
+        <span id="cellSizeValue">12px</span>
+      </div>
+      <div class="control-group">
+        <label>Fixed Size</label>
+        <label>
+          <input type="checkbox" id="fixedSizeCheck">
+          Enable scrolling
+        </label>
+      </div>
+      <div class="control-group">
+        <label>Vertical Month Labels</label>
+        <label>
+          <input type="checkbox" id="verticalMonthCheck" checked>
+          Vertical text (unchecked = horizontal)
+        </label>
+      </div>
+      <div class="control-group">
+        <label>Legend</label>
+        <label>
+          <input type="checkbox" id="showLegendCheck" checked>
+          Show Less/More legend
+        </label>
+      </div>
+      <div class="control-group">
+        <label>Date Range Preset</label>
+        <select id="dateRangeSelect">
+          <option value="year">1 Year</option>
+          <option value="6months">6 Months</option>
+          <option value="3months">3 Months</option>
+          <option value="30days">30 Days</option>
+          <option value="custom">Custom...</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label>Start Date</label>
+        <input type="date" id="startDateInput" disabled>
+      </div>
+      <div class="control-group">
+        <label>End Date</label>
+        <input type="date" id="endDateInput" disabled>
+      </div>
+    </div>
+    <button id="generateBtn">Generate Random Data</button>
+    <button class="secondary" id="clearBtn">Clear Data</button>
+    <weekwide-timeline id="timeline5"></weekwide-timeline>
+    <div class="output" id="output">Click on a cell to see events...</div>
+  </div>
+
+  <script type="module">
+    import '../src/weekwide-timeline.js';
+    
+    // Helper function to generate random data
+    function generateData(days = 365, maxValue = 10, density = 0.7, endDate = new Date()) {
+      const data = {};
+      
+      for (let i = 0; i < days; i++) {
+        if (Math.random() < density) {
+          const date = new Date(endDate);
+          date.setDate(date.getDate() - i);
+          const dateStr = date.toISOString().split('T')[0];
+          data[dateStr] = Math.floor(Math.random() * maxValue) + 1;
+        }
+      }
+      
+      return data;
+    }
+    
+    // Timeline 1: Default year view
+    const timeline1 = document.getElementById('timeline1');
+    timeline1.setData(generateData(365, 15, 0.6));
+    
+    // Timeline 2: Vertical
+    const timeline2 = document.getElementById('timeline2');
+    timeline2.orientation = 'vertical';
+    timeline2.setData(generateData(365, 12, 0.5));
+    
+    // Timeline 3: Fixed size with scrolling
+    const timeline3 = document.getElementById('timeline3');
+    timeline3.fixedSize = true;
+    timeline3.setData(generateData(365, 20, 0.7));
+    
+    // Timeline 4: Last 90 days
+    const timeline4 = document.getElementById('timeline4');
+    const today = new Date();
+    const ninetyDaysAgo = new Date(today);
+    ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+    timeline4.startDate = ninetyDaysAgo;
+    timeline4.endDate = today;
+    timeline4.colorScheme = 'blue';
+    timeline4.setData(generateData(90, 25, 0.8));
+    
+    // Timeline 5: Interactive
+    const timeline5 = document.getElementById('timeline5');
+    timeline5.setData(generateData(365, 10, 0.6));
+    
+    // Event listener for day selection
+    timeline5.addEventListener('day-selected', (e) => {
+      const output = document.getElementById('output');
+      output.textContent = JSON.stringify(e.detail, null, 2);
+    });
+    
+    // Control handlers
+    document.getElementById('orientationSelect').addEventListener('change', (e) => {
+      timeline5.orientation = e.target.value;
+    });
+    
+    document.getElementById('colorSelect').addEventListener('change', (e) => {
+      timeline5.colorScheme = e.target.value;
+    });
+    
+    document.getElementById('cellSizeSlider').addEventListener('input', (e) => {
+      timeline5.cellSize = parseInt(e.target.value);
+      document.getElementById('cellSizeValue').textContent = e.target.value + 'px';
+    });
+    
+    document.getElementById('fixedSizeCheck').addEventListener('change', (e) => {
+      timeline5.fixedSize = e.target.checked;
+    });
+    
+    document.getElementById('verticalMonthCheck').addEventListener('change', (e) => {
+      timeline5.verticalMonthLabels = e.target.checked;
+    });
+    
+    document.getElementById('showLegendCheck').addEventListener('change', (e) => {
+      timeline5.showLegend = e.target.checked;
+    });
+    
+    // Date range controls
+    const startDateInput = document.getElementById('startDateInput');
+    const endDateInput = document.getElementById('endDateInput');
+    const dateRangeSelect = document.getElementById('dateRangeSelect');
+    
+    // Format date as YYYY-MM-DD for input
+    function formatDateForInput(date) {
+      return date.toISOString().split('T')[0];
+    }
+    
+    // Initialize date inputs with current values
+    const initialEnd = new Date();
+    const initialStart = new Date(initialEnd.getFullYear() - 1, initialEnd.getMonth(), initialEnd.getDate());
+    startDateInput.value = formatDateForInput(initialStart);
+    endDateInput.value = formatDateForInput(initialEnd);
+    
+    dateRangeSelect.addEventListener('change', (e) => {
+      const value = e.target.value;
+      const end = new Date();
+      let start;
+      
+      if (value === 'custom') {
+        startDateInput.disabled = false;
+        endDateInput.disabled = false;
+        return;
+      } else {
+        startDateInput.disabled = true;
+        endDateInput.disabled = true;
+      }
+      
+      switch(value) {
+        case 'year':
+          start = new Date(end.getFullYear() - 1, end.getMonth(), end.getDate());
+          break;
+        case '6months':
+          start = new Date(end);
+          start.setMonth(start.getMonth() - 6);
+          break;
+        case '3months':
+          start = new Date(end);
+          start.setMonth(start.getMonth() - 3);
+          break;
+        case '30days':
+          start = new Date(end);
+          start.setDate(start.getDate() - 30);
+          break;
+      }
+      
+      startDateInput.value = formatDateForInput(start);
+      endDateInput.value = formatDateForInput(end);
+      
+      timeline5.startDate = start;
+      timeline5.endDate = end;
+      timeline5.setData(generateData(Math.ceil((end - start) / (1000 * 60 * 60 * 24)), 15, 0.6, end));
+    });
+    
+    startDateInput.addEventListener('change', (e) => {
+      timeline5.startDate = e.target.value;
+      const start = new Date(e.target.value);
+      const end = new Date(endDateInput.value);
+      const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+      timeline5.setData(generateData(days, 15, 0.6, end));
+    });
+    
+    endDateInput.addEventListener('change', (e) => {
+      timeline5.endDate = e.target.value;
+      const start = new Date(startDateInput.value);
+      const end = new Date(e.target.value);
+      const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+      timeline5.setData(generateData(days, 15, 0.6, end));
+    });
+    
+    // Button handlers
+    document.getElementById('generateBtn').addEventListener('click', () => {
+      const start = new Date(startDateInput.value);
+      const end = new Date(endDateInput.value);
+      const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+      timeline5.setData(generateData(days, 15, Math.random() * 0.5 + 0.4, end));
+      document.getElementById('output').textContent = 'Generated new random data';
+    });
+    
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      timeline5.clearData();
+      document.getElementById('output').textContent = 'Data cleared';
+    });
+  </script>
+</body>
+</html>
