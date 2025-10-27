@@ -1,5 +1,5 @@
 {
-  "name": "@mmmlib/weekwide-timeline",
+  "name": "weekwide-timeline",
   "version": "0.2.1",
   "description": "GitHub-style contribution graph web component for visualizing temporal data",
   "type": "module",
