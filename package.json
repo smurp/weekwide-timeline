@@ -1,6 +1,6 @@
 {
   "name": "@mmmlib/weekwide-timeline",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "GitHub-style contribution graph web component for visualizing temporal data",
   "type": "module",
   "main": "src/weekwide-timeline.js",

@@ -13,7 +13,7 @@ console.log('🔧 [WEEKWIDE-TIMELINE] Starting module...');
  * - Click events for day selection
  */
 
-class WeekwideTimelineWC extends HTMLElement {
+export class WeekwideTimelineWC extends HTMLElement {
   constructor() {
     super();
     console.log('🏗️ [WEEKWIDE-TIMELINE] Constructor called');
@@ -673,5 +673,3 @@ class WeekwideTimelineWC extends HTMLElement {
 console.log('🔧 [WEEKWIDE-TIMELINE] Defining custom element...');
 customElements.define('weekwide-timeline', WeekwideTimelineWC);
 console.log('✅ [WEEKWIDE-TIMELINE] Custom element registered');
-
-export default WeekwideTimelineWC;
